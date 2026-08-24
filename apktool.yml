@@ -1,0 +1,41 @@
+version: 3.0.3
+apkFileName: Be_a_maker_1_0_1_APKPure.apk
+usesFramework:
+  ids:
+  - 1
+sdkInfo:
+  minSdkVersion: 21
+  targetSdkVersion: 27
+versionInfo:
+  versionCode: 16
+  versionName: 1.0.1
+resourcesInfo:
+  packageId: 127
+doNotCompress:
+- arsc
+- gif
+- mp3
+- ogg
+- png
+- wav
+- META-INF/android.arch.core_runtime.version
+- META-INF/android.arch.lifecycle_livedata-core.version
+- META-INF/android.arch.lifecycle_runtime.version
+- META-INF/android.arch.lifecycle_viewmodel.version
+- META-INF/android.arch.persistence.room_runtime.version
+- META-INF/android.arch.persistence_db-framework.version
+- META-INF/android.arch.persistence_db.version
+- META-INF/com.android.support_animated-vector-drawable.version
+- META-INF/com.android.support_appcompat-v7.version
+- META-INF/com.android.support_design.version
+- META-INF/com.android.support_exifinterface.version
+- META-INF/com.android.support_recyclerview-v7.version
+- META-INF/com.android.support_support-compat.version
+- META-INF/com.android.support_support-core-ui.version
+- META-INF/com.android.support_support-core-utils.version
+- META-INF/com.android.support_support-fragment.version
+- META-INF/com.android.support_support-media-compat.version
+- META-INF/com.android.support_support-v4.version
+- META-INF/com.android.support_support-vector-drawable.version
+- META-INF/com.android.support_transition.version
+- okhttp3/internal/publicsuffix/publicsuffixes.gz

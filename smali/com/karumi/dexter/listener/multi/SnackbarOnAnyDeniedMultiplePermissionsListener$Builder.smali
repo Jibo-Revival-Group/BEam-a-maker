@@ -1,0 +1,199 @@
+.class public Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;
+.super Ljava/lang/Object;
+
+
+# annotations
+.annotation system Ldalvik/annotation/EnclosingClass;
+    value = Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener;
+.end annotation
+
+.annotation system Ldalvik/annotation/InnerClass;
+    accessFlags = 0x9
+    name = "Builder"
+.end annotation
+
+
+# instance fields
+.field private buttonText:Ljava/lang/String;
+
+.field private duration:I
+
+.field private onClickListener:Landroid/view/View$OnClickListener;
+
+.field private snackbarCallback:Landroid/support/design/widget/Snackbar$Callback;
+
+.field private final text:Ljava/lang/String;
+
+.field private final view:Landroid/view/View;
+
+
+# direct methods
+.method private constructor <init>(Landroid/view/View;Ljava/lang/String;)V
+    .locals 1
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    const/4 v0, 0x0
+
+    iput v0, p0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->duration:I
+
+    iput-object p1, p0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->view:Landroid/view/View;
+
+    iput-object p2, p0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->text:Ljava/lang/String;
+
+    return-void
+.end method
+
+.method static synthetic access$000(Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;)Landroid/view/View;
+    .locals 1
+
+    iget-object v0, p0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->view:Landroid/view/View;
+
+    return-object v0
+.end method
+
+.method public static with(Landroid/view/View;I)Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;
+    .locals 1
+    .param p1    # I
+        .annotation build Landroid/support/annotation/StringRes;
+        .end annotation
+    .end param
+
+    invoke-virtual {p0}, Landroid/view/View;->getContext()Landroid/content/Context;
+
+    move-result-object v0
+
+    invoke-virtual {v0, p1}, Landroid/content/Context;->getString(I)Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-static {p0, v0}, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->with(Landroid/view/View;Ljava/lang/String;)Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;
+
+    move-result-object v0
+
+    return-object v0
+.end method
+
+.method public static with(Landroid/view/View;Ljava/lang/String;)Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;
+    .locals 1
+
+    new-instance v0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;
+
+    invoke-direct {v0, p0, p1}, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;-><init>(Landroid/view/View;Ljava/lang/String;)V
+
+    return-object v0
+.end method
+
+
+# virtual methods
+.method public build()Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener;
+    .locals 8
+
+    new-instance v0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener;
+
+    iget-object v1, p0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->view:Landroid/view/View;
+
+    iget-object v2, p0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->text:Ljava/lang/String;
+
+    iget-object v3, p0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->buttonText:Ljava/lang/String;
+
+    iget-object v4, p0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->onClickListener:Landroid/view/View$OnClickListener;
+
+    iget-object v5, p0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->snackbarCallback:Landroid/support/design/widget/Snackbar$Callback;
+
+    iget v6, p0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->duration:I
+
+    const/4 v7, 0x0
+
+    invoke-direct/range {v0 .. v7}, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener;-><init>(Landroid/view/View;Ljava/lang/String;Ljava/lang/String;Landroid/view/View$OnClickListener;Landroid/support/design/widget/Snackbar$Callback;ILcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$1;)V
+
+    return-object v0
+.end method
+
+.method public withButton(ILandroid/view/View$OnClickListener;)Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;
+    .locals 1
+    .param p1    # I
+        .annotation build Landroid/support/annotation/StringRes;
+        .end annotation
+    .end param
+
+    iget-object v0, p0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->view:Landroid/view/View;
+
+    invoke-virtual {v0}, Landroid/view/View;->getContext()Landroid/content/Context;
+
+    move-result-object v0
+
+    invoke-virtual {v0, p1}, Landroid/content/Context;->getString(I)Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-virtual {p0, v0, p2}, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->withButton(Ljava/lang/String;Landroid/view/View$OnClickListener;)Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;
+
+    move-result-object v0
+
+    return-object v0
+.end method
+
+.method public withButton(Ljava/lang/String;Landroid/view/View$OnClickListener;)Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;
+    .locals 0
+
+    iput-object p1, p0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->buttonText:Ljava/lang/String;
+
+    iput-object p2, p0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->onClickListener:Landroid/view/View$OnClickListener;
+
+    return-object p0
+.end method
+
+.method public withCallback(Landroid/support/design/widget/Snackbar$Callback;)Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;
+    .locals 0
+
+    iput-object p1, p0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->snackbarCallback:Landroid/support/design/widget/Snackbar$Callback;
+
+    return-object p0
+.end method
+
+.method public withDuration(I)Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;
+    .locals 0
+
+    iput p1, p0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->duration:I
+
+    return-object p0
+.end method
+
+.method public withOpenSettingsButton(I)Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;
+    .locals 1
+    .param p1    # I
+        .annotation build Landroid/support/annotation/StringRes;
+        .end annotation
+    .end param
+
+    iget-object v0, p0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->view:Landroid/view/View;
+
+    invoke-virtual {v0}, Landroid/view/View;->getContext()Landroid/content/Context;
+
+    move-result-object v0
+
+    invoke-virtual {v0, p1}, Landroid/content/Context;->getString(I)Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-virtual {p0, v0}, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->withOpenSettingsButton(Ljava/lang/String;)Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;
+
+    move-result-object v0
+
+    return-object v0
+.end method
+
+.method public withOpenSettingsButton(Ljava/lang/String;)Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;
+    .locals 1
+
+    iput-object p1, p0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->buttonText:Ljava/lang/String;
+
+    new-instance v0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder$1;
+
+    invoke-direct {v0, p0}, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder$1;-><init>(Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;)V
+
+    iput-object v0, p0, Lcom/karumi/dexter/listener/multi/SnackbarOnAnyDeniedMultiplePermissionsListener$Builder;->onClickListener:Landroid/view/View$OnClickListener;
+
+    return-object p0
+.end method
