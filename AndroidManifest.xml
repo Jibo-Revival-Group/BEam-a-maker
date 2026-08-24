@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.everis.jibo.app.beamaker">
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <application android:allowBackup="false" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:largeHeap="true" android:name="com.everis.jibo.beamaker.BeAMakerApp" android:supportsRtl="true" android:theme="@style/Theme.Design.Light.NoActionBar">
+        <activity android:configChanges="orientation" android:name="com.everis.jibo.beamaker.ui.activities.SplashActivity" android:screenOrientation="landscape" android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:configChanges="orientation" android:name="com.everis.jibo.beamaker.ui.activities.TermsAndConditionsActivity" android:screenOrientation="landscape" android:theme="@style/TermsAndConditionsTheme"/>
+        <activity android:configChanges="orientation" android:name="com.everis.jibo.beamaker.ui.activities.PairingActivity" android:screenOrientation="landscape" android:theme="@style/PairingTheme"/>
+        <activity android:configChanges="orientation" android:name="com.everis.jibo.beamaker.ui.activities.GenericWebViewActivity" android:screenOrientation="landscape"/>
+        <activity android:configChanges="orientation" android:name="com.everis.jibo.beamaker.ui.activities.ScratchActivity" android:screenOrientation="landscape" android:theme="@style/ScratchTheme" android:windowSoftInputMode="adjustNothing"/>
+        <activity android:configChanges="orientation" android:name="com.everis.jibo.beamaker.ui.activities.MyProjectsActivity" android:screenOrientation="landscape" android:theme="@style/MyProjectsTheme"/>
+        <service android:name="com.everis.jibo.beamaker.services.ClosingService" android:stopWithTask="false"/>
+        <activity android:name="com.jibo.apptoolkit.android.ui.SignInActivity" android:screenOrientation="locked" android:theme="@style/ApptoolkitSignInTheme"/>
+        <activity android:name="com.karumi.dexter.DexterActivity" android:theme="@style/Dexter.Internal.Theme.Transparent"/>
+        <provider android:authorities="com.everis.jibo.app.beamaker.com.squareup.picasso" android:exported="false" android:name="com.squareup.picasso.PicassoProvider"/>
+        <meta-data android:name="com.android.vending.derived.apk.id" android:value="1"/>
+    </application>
+</manifest>
