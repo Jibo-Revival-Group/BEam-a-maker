@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Be a Maker — Pair</title>
+  <link rel="stylesheet" href="/pairing.css">
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="back" href="/" aria-label="Be a Maker">Be a Maker</a>
+  </header>
+  <main class="panel">
+    <h1>WHICH JIBO DO YOU WANT TO CONNECT TO?</h1>
+    <label class="ip-label" for="robot-ip">Robot IP</label>
+    <input id="robot-ip" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="192.168.1.50">
+    <button id="connect" type="button" disabled>CONNECT</button>
+    <p id="status" class="status" role="status"></p>
+  </main>
+  <footer class="footer">
+    <span class="alert" aria-hidden="true">!</span>
+    Remember that you need to have your Jibo updated to enjoy it! ROM must be on this LAN (port 7160, or 8160 on community firmware).
+  </footer>
+  <script src="/pairing.js"></script>
+</body>
+</html>

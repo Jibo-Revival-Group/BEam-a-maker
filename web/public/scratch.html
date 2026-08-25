@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Be a Maker</title>
+  <link rel="stylesheet" href="/playground/playground.css">
+  <link rel="stylesheet" href="/playground/zenburn.css">
+  <link rel="stylesheet" href="/scratch.css">
+</head>
+<body>
+  <header class="scratch-toolbar">
+    <button id="btn-menu" type="button" class="icon-btn" aria-label="Projects">☰</button>
+    <input id="project-name" type="text" value="Jibo Project" aria-label="Project name">
+    <span id="conn-label" class="conn">Connecting…</span>
+    <button id="btn-new" type="button">New</button>
+    <button id="btn-edit" type="button">Edit</button>
+    <button id="btn-save" type="button">Save</button>
+    <button id="btn-disconnect" type="button" class="ghost">Disconnect</button>
+  </header>
+  <aside id="drawer" class="drawer" hidden>
+    <h2>My Projects</h2>
+    <ul id="project-list"></ul>
+    <button id="btn-close-drawer" type="button">Close</button>
+  </aside>
+  <div id="projectButtons">
+    <img id="greenflag" src="/playground/media/green-flag.svg" width="30" alt="Go">
+    <img id="stopall" src="/playground/media/icons/control_stop.svg" width="30" alt="Stop">
+    <span id="debug"></span>
+  </div>
+  <div id="blocks"></div>
+  <script src="/vendor/jquery-3.2.1.min.js"></script>
+  <script src="/app-interface.js"></script>
+  <script src="/playground/media-lists.js"></script>
+  <script src="/playground/scratch-storage.js"></script>
+  <script src="/playground/vendor.js"></script>
+  <script src="/playground/scratch-vm.js"></script>
+  <script src="/boot-playground.js"></script>
+  <script src="/playground/playground.js"></script>
+  <script src="/scratch.js"></script>
+</body>
+</html>
