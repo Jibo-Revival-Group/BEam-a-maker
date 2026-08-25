@@ -43,7 +43,7 @@ apksigner sign --ks debug.jks dist/beamaker_patched.apk
 
 You need your own keystore (`debug.jks` is not in this repo). Create one with `keytool` if you do not already have one.
 
-A sideloadable APK is not stored in git. Rebuild locally, or attach a build to a GitHub Release.
+A sideloadable APK is stored in git, however it may be very out of date. Rebuild locally, or attach a build to a GitHub Release.
 
 ## Credit / Disclaimer
 
