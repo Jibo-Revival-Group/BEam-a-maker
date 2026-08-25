@@ -1,7 +1,13 @@
 (function () {
   if (window.VirtualMachine && window.VirtualMachine.prototype) {
-    window.VirtualMachine.prototype.downloadProjectId = function () {
+    const proto = window.VirtualMachine.prototype;
+    proto.downloadProjectId = function () {
       return Promise.resolve();
+    };
+    const playgroundData = proto.getPlaygroundData;
+    proto.getPlaygroundData = function () {
+      if (!this.editingTarget) return;
+      return playgroundData.apply(this, arguments);
     };
   }
   if (window.Blockly) {

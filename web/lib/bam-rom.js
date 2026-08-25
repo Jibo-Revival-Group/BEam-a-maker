@@ -69,6 +69,13 @@ class BamRom {
           autoHeartbeat: true,
           autoSubscribe: true
         });
+        client.on('error', (err) => {
+          this.emit({
+            type: 'status',
+            state: 'error',
+            message: err && err.message ? err.message : String(err)
+          });
+        });
         await Promise.race([
           client.connect(),
           new Promise((_, reject) => {

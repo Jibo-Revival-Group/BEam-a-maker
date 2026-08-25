@@ -51,13 +51,36 @@
   white-space: nowrap;
 }
 
+.scratch-toolbar button.go {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #3db542;
+  color: #fff;
+}
+
+.scratch-toolbar button.stop {
+  background: #c36871;
+  color: #fff;
+}
+
 #blocks {
   top: 56px;
+  z-index: 1;
 }
 
 #projectButtons {
+  position: absolute;
   top: 64px;
   right: 16px;
+  z-index: 50;
+  pointer-events: auto;
+}
+
+#projectButtons img {
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
 }
 
 .drawer {

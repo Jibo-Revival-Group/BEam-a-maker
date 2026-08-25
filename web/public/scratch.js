@@ -124,18 +124,165 @@
     window.location.href = '/';
   });
 
-  window.addEventListener('bam-save', (event) => {
-    const detail = event.detail || {};
-    if (detail.action === 'Save' && detail.arg) saveNow(detail.arg);
-  });
+  const BLANK_SB2 = {
+    objName: 'Stage',
+    sounds: [],
+    costumes: [],
+    currentCostumeIndex: 0,
+    tempoBPM: 60,
+    children: [
+      {
+        objName: 'Sprite1',
+        scripts: [],
+        sounds: [],
+        costumes: [],
+        currentCostumeIndex: 0,
+        scratchX: 0,
+        scratchY: 0,
+        scale: 1,
+        direction: 90,
+        rotationStyle: 'normal',
+        isDraggable: false,
+        visible: true
+      }
+    ]
+  };
 
-  window.addEventListener('bam-scratch-ready', () => {
+  function vm() {
+    return window.Scratch && Scratch.vm;
+  }
+
+  let targetReady = null;
+
+  function ensureTarget() {
+    if (!targetReady) {
+      targetReady = (async () => {
+        const instance = vm();
+        if (!instance) {
+          targetReady = null;
+          return null;
+        }
+        try {
+          if (!instance.editingTarget) {
+            await instance.loadProject(JSON.stringify(BLANK_SB2));
+          }
+          if (instance.runtime && !instance.runtime._steppingInterval) instance.start();
+          return instance;
+        } catch (err) {
+          targetReady = null;
+          throw err;
+        }
+      })();
+    }
+    return targetReady;
+  }
+
+  function restoreCurrentProject() {
     const id = currentId();
     const project = loadProjects().find((entry) => entry.id === id);
     if (project) {
       nameInput.value = project.name || 'Jibo Project';
       applyXml(project.xml);
     }
+  }
+
+  function workspaceXml() {
+    const workspace = window.Scratch && Scratch.workspace;
+    if (!workspace || typeof Blockly === 'undefined') return '';
+    return Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
+  }
+
+  function vmScriptCount(instance) {
+    const targets = (instance.runtime && instance.runtime.targets) || [];
+    let count = 0;
+    targets.forEach((target) => {
+      const scripts = target.blocks && target.blocks.getScripts && target.blocks.getScripts();
+      if (scripts) count += scripts.length;
+    });
+    return count;
+  }
+
+  function hasFlagHat(instance) {
+    const targets = (instance.runtime && instance.runtime.targets) || [];
+    for (let t = 0; t < targets.length; t++) {
+      const blocks = targets[t].blocks && targets[t].blocks._blocks;
+      if (!blocks) continue;
+      for (const id of Object.keys(blocks)) {
+        if (blocks[id] && blocks[id].opcode === 'event_whenflagclicked') return true;
+      }
+    }
+    return false;
+  }
+
+  function syncWorkspaceToVm(instance) {
+    const workspace = window.Scratch && Scratch.workspace;
+    if (!workspace || !instance || !instance.editingTarget) return;
+    const top = workspace.getTopBlocks ? workspace.getTopBlocks(false) : [];
+    if (top.length && vmScriptCount(instance) === 0) {
+      applyXml(workspaceXml());
+    }
+  }
+
+  function startLooseStacks(instance) {
+    const runtime = instance.runtime;
+    if (!runtime) return 0;
+    let started = 0;
+    (runtime.targets || []).forEach((target) => {
+      const scripts = target.blocks && target.blocks.getScripts && target.blocks.getScripts();
+      (scripts || []).forEach((topId) => {
+        runtime.toggleScript(topId, { target: target, stackClick: true });
+        started += 1;
+      });
+    });
+    return started;
+  }
+
+  function flashHint(text) {
+    const prev = connLabel.textContent;
+    connLabel.textContent = text;
+    setTimeout(() => {
+      if (connLabel.textContent === text) connLabel.textContent = prev;
+    }, 4500);
+  }
+
+  async function go() {
+    const instance = await ensureTarget();
+    if (!instance) {
+      flashHint('Scratch is still starting… try Go again');
+      return;
+    }
+    if (instance.runtime && !instance.runtime._steppingInterval) instance.start();
+    syncWorkspaceToVm(instance);
+    if (hasFlagHat(instance)) {
+      instance.greenFlag();
+      return;
+    }
+    instance.stopAll();
+    const started = startLooseStacks(instance);
+    if (!started) {
+      flashHint('Snap a “when green flag clicked” hat on your stack, then press Go');
+    }
+  }
+
+  function stop() {
+    const instance = vm();
+    if (instance) instance.stopAll();
+  }
+
+  document.getElementById('btn-go').addEventListener('click', go);
+  document.getElementById('btn-stop').addEventListener('click', stop);
+  document.getElementById('greenflag').addEventListener('click', go);
+  document.getElementById('stopall').addEventListener('click', stop);
+
+  window.addEventListener('bam-save', (event) => {
+    const detail = event.detail || {};
+    if (detail.action === 'Save' && detail.arg) saveNow(detail.arg);
+  });
+
+  window.addEventListener('bam-scratch-ready', () => {
+    ensureTarget()
+      .then(restoreCurrentProject)
+      .catch((err) => console.error('could not restore project', err));
   });
 
   window.addEventListener('bam-status', (event) => {
@@ -163,4 +310,19 @@
     });
 
   renderList();
+
+  const prevLoad = window.onload;
+  window.onload = async function () {
+    try {
+      if (typeof prevLoad === 'function') prevLoad.call(window);
+    } catch (err) {
+      console.error('playground init failed', err);
+    }
+    try {
+      await ensureTarget();
+      restoreCurrentProject();
+    } catch (err) {
+      console.error('could not start blank project', err);
+    }
+  };
 })();
