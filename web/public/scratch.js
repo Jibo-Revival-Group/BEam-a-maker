@@ -14,6 +14,7 @@
   const toast = document.getElementById("toast");
   const dialogRoot = document.getElementById("dialog-root");
   const dialogArt = document.getElementById("dialog-art");
+  const dialogArtWrap = document.getElementById("dialog-art-wrap");
   const dialogTitle = document.getElementById("dialog-title");
   const dialogBody = document.getElementById("dialog-body");
   const dialogInput = document.getElementById("dialog-input");
@@ -113,6 +114,41 @@
     return "/apk/mipmap/project_" + LETTERS[n % 12] + ".png";
   }
 
+  function thumbSrc(project) {
+    if (project.thumb) {
+      return project.thumb + (project.thumbRev ? "?v=" + project.thumbRev : "");
+    }
+    return thumbFor(project.id);
+  }
+
+  let pendingThumbId = null;
+  const thumbFile = document.getElementById("thumb-file");
+
+  function fileToThumbDataUrl(file) {
+    return new Promise(function (resolve, reject) {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = function () {
+        URL.revokeObjectURL(url);
+        const size = 256;
+        const canvas = document.createElement("canvas");
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext("2d");
+        const fit = Math.max(size / img.width, size / img.height);
+        const w = img.width * fit;
+        const h = img.height * fit;
+        ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+        resolve(canvas.toDataURL("image/png"));
+      };
+      img.onerror = function () {
+        URL.revokeObjectURL(url);
+        reject(new Error("Could not read that image."));
+      };
+      img.src = url;
+    });
+  }
+
   function syncToolbar() {
     const hasProject = !!currentId();
     btnEdit.disabled = !hasProject;
@@ -133,6 +169,8 @@
 
   function openProjects() {
     closeDrawer();
+    if (window.BamScreen) window.BamScreen.close();
+    if (window.BamCam) window.BamCam.close();
     renderList();
     projectsScreen.classList.add("is-open");
     projectsScreen.setAttribute("aria-hidden", "false");
@@ -152,9 +190,14 @@
     dialogTitle.textContent = spec.title || "";
     if (spec.image) {
       dialogArt.src = spec.image;
-      dialogArt.classList.remove("is-hidden");
+      dialogArtWrap.classList.remove("is-hidden");
     } else {
-      dialogArt.classList.add("is-hidden");
+      dialogArtWrap.classList.add("is-hidden");
+    }
+    if (spec.thumbPick) {
+      dialogArtWrap.classList.add("can-pick");
+    } else {
+      dialogArtWrap.classList.remove("can-pick");
     }
     if (spec.body) {
       dialogBody.hidden = false;
@@ -242,7 +285,7 @@
       thumb.className = "project-thumb";
       const img = document.createElement("img");
       img.className = "thumb";
-      img.src = thumbFor(project.id);
+      img.src = thumbSrc(project);
       img.alt = "";
       thumb.appendChild(img);
 
@@ -347,9 +390,13 @@
   }
 
   function openEditDialog() {
+    const project = loadProjects().find(function (entry) {
+      return entry.id === currentId();
+    });
     openDialog({
       title: "PROJECT NAME",
-      image: "/apk/mipmap/project_e.png",
+      image: project ? thumbSrc(project) : "/apk/mipmap/project_e.png",
+      thumbPick: true,
       input: true,
       value: getName(),
       actions: [
@@ -442,7 +489,7 @@
     closeDrawer();
     openInfoDialog(
       "HELP",
-      "Enter your Jibo’s IP on the pairing screen, then CONNECT. ROM must be on this LAN (port 7160, or 8160 on community firmware). Snap blocks together and press the green flag to run. Open Cool ideas at the bottom for starter projects."
+      "Pick a saved Jibo on the pairing screen (name + IP), then CONNECT. ROM must be on this LAN (port 7160, or 8160 on community firmware). Snap blocks together and press the green flag to run. Use Edit to change a project’s thumbnail, Jibo Screen to put an image on the face, Jibo Cam for a live camera view, or Cool ideas at the bottom for starter projects."
     );
   });
   document.getElementById("menu-about").addEventListener("click", function () {
@@ -457,6 +504,13 @@
     openDisconnectDialog();
   });
   document.getElementById("dialog-close").addEventListener("click", closeDialog);
+  dialogArtWrap.addEventListener("click", function () {
+    if (!dialogArtWrap.classList.contains("can-pick")) return;
+    const id = currentId();
+    if (!id) return;
+    pendingThumbId = id;
+    thumbFile.click();
+  });
   dialogRoot.addEventListener("click", function (event) {
     if (event.target === dialogRoot) closeDialog();
   });
@@ -465,6 +519,8 @@
       closeDialog();
       setCoolOpen(false);
       closeDrawer();
+      if (window.BamScreen) window.BamScreen.close();
+      if (window.BamCam) window.BamCam.close();
     }
   });
 
@@ -626,6 +682,42 @@
       toast.classList.remove("is-open");
     }, 4500);
   }
+
+  thumbFile.addEventListener("change", async function () {
+    const file = thumbFile.files && thumbFile.files[0];
+    const id = pendingThumbId;
+    thumbFile.value = "";
+    pendingThumbId = null;
+    if (!file || !id) return;
+    try {
+      const dataUrl = await fileToThumbDataUrl(file);
+      const res = await fetch("/api/media", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: "thumbs/" + id,
+          mime: "image/png",
+          data: dataUrl
+        })
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.message || "Could not save thumbnail.");
+      const projects = loadProjects();
+      const project = projects.find(function (entry) {
+        return entry.id === id;
+      });
+      if (!project) return;
+      project.thumb = body.url;
+      project.thumbRev = Date.now();
+      saveProjects(projects);
+      renderList();
+      if (currentId() === id) {
+        dialogArt.src = project.thumb + "?v=" + project.thumbRev;
+      }
+    } catch (err) {
+      flashHint(err.message || "Could not set thumbnail.");
+    }
+  });
 
   async function go() {
     const instance = await ensureTarget();

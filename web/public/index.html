@@ -21,12 +21,7 @@
     </header>
     <h1>WHICH JIBO DO YOU WANT TO CONNECT TO?</h1>
     <div class="robots">
-      <div id="robot-card" class="robot-card" role="button" tabindex="0" aria-pressed="false">
-        <img id="robot-art" class="robot-art" src="/apk/mipmap/ic_jibo_pair.png" alt="">
-        <span class="robot-name">Jibo</span>
-        <label class="visually-hidden" for="robot-ip">Robot IP</label>
-        <input id="robot-ip" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="192.168.1.50">
-      </div>
+      <div id="robot-list" class="robot-list"></div>
     </div>
     <button id="connect" type="button" disabled>CONNECT</button>
     <p id="status" class="status" role="status"></p>

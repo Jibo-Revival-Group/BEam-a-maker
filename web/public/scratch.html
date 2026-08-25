@@ -32,6 +32,16 @@
         </button>
       </li>
       <li>
+        <button type="button" id="menu-screen" class="nav-item">
+          <span class="nav-accent"></span>JIBO SCREEN
+        </button>
+      </li>
+      <li>
+        <button type="button" id="menu-cam" class="nav-item">
+          <span class="nav-accent"></span>JIBO CAM
+        </button>
+      </li>
+      <li>
         <button type="button" id="menu-help" class="nav-item">
           <span class="nav-accent"></span>HELP
         </button>
@@ -58,6 +68,64 @@
     <ul id="project-list" class="project-list"></ul>
   </section>
 
+  <section id="screen-stage" class="screen-stage" aria-hidden="true">
+    <header class="projects-toolbar">
+      <button id="btn-screen-back" type="button" class="icon-hit" aria-label="Back">
+        <img src="/apk/mipmap/ic_back.png" width="24" height="24" alt="">
+      </button>
+    </header>
+    <div class="projects-heading">
+      <span class="nav-accent"></span>
+      <h2>JIBO SCREEN</h2>
+    </div>
+    <div class="screen-stage-body">
+      <div class="screen-frame">
+        <canvas id="screen-canvas" width="1280" height="720"></canvas>
+        <p id="screen-empty" class="screen-empty">Upload a PNG or JPG</p>
+      </div>
+      <div class="screen-controls">
+        <label class="screen-upload">
+          Upload
+          <input id="screen-file" type="file" accept="image/png,image/jpeg">
+        </label>
+        <label class="screen-slider">
+          Rotate
+          <input id="screen-rotate" type="range" min="-180" max="180" value="0">
+        </label>
+        <label class="screen-slider">
+          Scale
+          <input id="screen-scale" type="range" min="5" max="400" value="100">
+        </label>
+        <label class="screen-live">
+          <input id="screen-live" type="checkbox">
+          Live
+        </label>
+        <button id="screen-show" type="button" class="screen-btn" disabled>Show on Jibo</button>
+        <button id="screen-clear" type="button" class="screen-btn" disabled>Clear screen</button>
+      </div>
+      <p id="screen-status" class="screen-status" role="status"></p>
+    </div>
+  </section>
+
+  <section id="cam-stage" class="screen-stage" aria-hidden="true">
+    <header class="projects-toolbar">
+      <button id="btn-cam-back" type="button" class="icon-hit" aria-label="Back">
+        <img src="/apk/mipmap/ic_back.png" width="24" height="24" alt="">
+      </button>
+    </header>
+    <div class="projects-heading">
+      <span class="nav-accent"></span>
+      <h2>JIBO CAM</h2>
+    </div>
+    <div class="screen-stage-body">
+      <div class="screen-frame">
+        <img id="cam-feed" class="cam-feed" alt="Jibo camera">
+        <p id="cam-empty" class="screen-empty">Waiting for camera…</p>
+      </div>
+      <p id="cam-status" class="screen-status" role="status"></p>
+    </div>
+  </section>
+
   <div id="projectButtons">
     <img id="greenflag" src="/playground/media/green-flag.svg" width="30" alt="Go">
     <img id="stopall" src="/playground/media/icons/control_stop.svg" width="30" alt="Stop">
@@ -81,10 +149,14 @@
       <button type="button" class="dialog-close" id="dialog-close" aria-label="Close">
         <img src="/apk/mipmap/close_icon_orange.png" alt="">
       </button>
-      <img id="dialog-art" class="dialog-art" src="/apk/mipmap/project_name_img.png" alt="">
+      <div id="dialog-art-wrap" class="dialog-art-wrap">
+        <img id="dialog-art" class="dialog-art" src="/apk/mipmap/project_name_img.png" alt="">
+        <span id="dialog-art-hint" class="dialog-art-hint">Change thumbnail</span>
+      </div>
       <h2 id="dialog-title">NEW PROJECT</h2>
       <p id="dialog-body" hidden></p>
       <input id="dialog-input" type="text" value="Jibo Project">
+      <input id="thumb-file" type="file" accept="image/png,image/jpeg" hidden>
       <div id="dialog-actions" class="dialog-actions"></div>
     </div>
   </div>
@@ -109,5 +181,7 @@
   <script src="/boot-playground.js"></script>
   <script src="/playground/playground.js"></script>
   <script src="/scratch.js"></script>
+  <script src="/screen-stage.js"></script>
+  <script src="/jibo-cam.js"></script>
 </body>
 </html>

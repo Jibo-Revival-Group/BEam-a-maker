@@ -11,6 +11,7 @@ dist/
  
 # web app
 web/node_modules/
+web/data/
 
 # OS / editor junk
 .DS_Store

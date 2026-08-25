@@ -134,12 +134,38 @@ input {
   height: 18px;
 }
 
+.dialog-card .dialog-art-wrap {
+  display: block;
+  width: 140px;
+  margin: 12px auto 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: default;
+}
+
+.dialog-card .dialog-art-wrap.can-pick {
+  cursor: pointer;
+}
+
 .dialog-card .dialog-art {
   display: block;
   width: 140px;
   height: 140px;
-  margin: 12px auto 8px;
+  margin: 0;
   object-fit: contain;
+}
+
+.dialog-card .dialog-art-hint {
+  display: none;
+  margin-top: 6px;
+  font-family: var(--font-light);
+  font-size: 13px;
+  color: var(--blue);
+}
+
+.dialog-card .dialog-art-wrap.can-pick .dialog-art-hint {
+  display: block;
 }
 
 .dialog-card h2 {

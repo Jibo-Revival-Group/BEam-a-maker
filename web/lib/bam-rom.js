@@ -259,6 +259,8 @@ class BamRom {
     this.host = null;
     this.port = null;
     this.listeners = new Set();
+    this._displayChain = Promise.resolve();
+    this._cameraReq = null;
   }
 
   get connected() {
@@ -349,11 +351,148 @@ class BamRom {
     );
   }
 
+  _queueDisplay(fn) {
+    const next = this._displayChain.then(fn, fn);
+    this._displayChain = next.then(
+      () => {},
+      () => {}
+    );
+    return next;
+  }
+
+  async showImage(uri, name) {
+    if (!this.connected) {
+      throw new Error('Not connected to a Jibo.');
+    }
+    const client = this.client;
+    const assetName = String(name || 'bam-face').slice(0, 255);
+    return this._queueDisplay(async () => {
+      try {
+        await client.assets.fetch(uri, assetName);
+      } catch (err) {
+        console.warn('FetchAsset failed, Display will load src', err && err.message ? err.message : err);
+      }
+      client.display.showImage(uri, assetName);
+      await new Promise((resolve) => setTimeout(resolve, 350));
+    });
+  }
+
+  async showEye() {
+    if (!this.connected) {
+      throw new Error('Not connected to a Jibo.');
+    }
+    const client = this.client;
+    return this._queueDisplay(async () => {
+      client.display.showEye();
+      await new Promise((resolve) => setTimeout(resolve, 350));
+    });
+  }
+
+  _mediaTarget(uri) {
+    const fallback = { host: this.host, port: this.port, path: '/' };
+    if (!uri) return fallback;
+    if (/^https?:\/\//i.test(uri)) {
+      try {
+        const parsed = new URL(uri);
+        let host = parsed.hostname;
+        if (host === '127.0.0.1' || host === 'localhost' || host === '::1') {
+          host = this.host;
+        }
+        return {
+          host,
+          port: Number(parsed.port) || this.port,
+          path: parsed.pathname + parsed.search
+        };
+      } catch (_) {
+        return fallback;
+      }
+    }
+    return {
+      host: this.host,
+      port: this.port,
+      path: uri.startsWith('/') ? uri : '/' + uri
+    };
+  }
+
+  stopCamera() {
+    const req = this._cameraReq;
+    this._cameraReq = null;
+    if (req) {
+      try {
+        req.destroy();
+      } catch (_) {
+        /* ignore */
+      }
+    }
+    if (this.client && this.client.camera) {
+      try {
+        this.client.camera.stopVideo();
+      } catch (_) {
+        /* ignore */
+      }
+    }
+  }
+
+  async pipeCamera(res) {
+    this.stopCamera();
+    if (!this.connected) {
+      throw new Error('Not connected to a Jibo.');
+    }
+    const stream = await this.client.camera.startVideo();
+    const target = this._mediaTarget(stream && stream.uri);
+    await new Promise((resolve, reject) => {
+      const req = http.get(
+        { host: target.host, port: target.port, path: target.path },
+        (robotRes) => {
+          if (res.headersSent) {
+            robotRes.resume();
+            resolve();
+            return;
+          }
+          const type =
+            robotRes.headers['content-type'] || 'multipart/x-mixed-replace; boundary=frame';
+          res.writeHead(robotRes.statusCode || 200, {
+            'Content-Type': type,
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            Pragma: 'no-cache',
+            Connection: 'close',
+            'X-Accel-Buffering': 'no'
+          });
+          robotRes.pipe(res);
+          const stop = () => {
+            try {
+              robotRes.destroy();
+            } catch (_) {
+              /* ignore */
+            }
+            try {
+              req.destroy();
+            } catch (_) {
+              /* ignore */
+            }
+            this.stopCamera();
+            resolve();
+          };
+          res.on('close', stop);
+          robotRes.on('end', stop);
+          robotRes.on('error', stop);
+        }
+      );
+      req.on('error', (err) => {
+        this.stopCamera();
+        reject(err);
+      });
+      this._cameraReq = req;
+    });
+  }
+
   async disconnect() {
+    this.stopCamera();
     const client = this.client;
     this.client = null;
     this.host = null;
     this.port = null;
+    this._displayChain = Promise.resolve();
     if (!client) return;
     try {
       if (typeof client.destroy === 'function') client.destroy();
