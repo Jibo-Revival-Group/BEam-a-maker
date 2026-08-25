@@ -4,24 +4,61 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Be a Maker — Pair</title>
+  <link rel="stylesheet" href="/bam.css">
   <link rel="stylesheet" href="/pairing.css">
 </head>
 <body>
-  <div class="stars" aria-hidden="true"></div>
-  <header class="topbar">
-    <a class="back" href="/" aria-label="Be a Maker">Be a Maker</a>
-  </header>
-  <main class="panel">
+  <div id="pairing" class="pairing">
+    <div class="pairing-bg" aria-hidden="true"></div>
+    <div id="stars-pairing" class="stars-layer" aria-hidden="true"></div>
+    <header class="pairing-toolbar">
+      <button id="btn-back" type="button" class="icon-hit" aria-label="Back">
+        <img src="/apk/icons/back.svg" width="24" height="24" alt="">
+      </button>
+      <button id="btn-refresh" type="button" class="icon-hit" aria-label="Refresh">
+        <img src="/apk/icons/refresh.svg" width="24" height="24" alt="">
+      </button>
+    </header>
     <h1>WHICH JIBO DO YOU WANT TO CONNECT TO?</h1>
-    <label class="ip-label" for="robot-ip">Robot IP</label>
-    <input id="robot-ip" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="192.168.1.50">
+    <div class="robots">
+      <div id="robot-card" class="robot-card" role="button" tabindex="0" aria-pressed="false">
+        <img id="robot-art" class="robot-art" src="/apk/mipmap/ic_jibo_pair.png" alt="">
+        <span class="robot-name">Jibo</span>
+        <label class="visually-hidden" for="robot-ip">Robot IP</label>
+        <input id="robot-ip" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="192.168.1.50">
+      </div>
+    </div>
     <button id="connect" type="button" disabled>CONNECT</button>
     <p id="status" class="status" role="status"></p>
-  </main>
-  <footer class="footer">
-    <span class="alert" aria-hidden="true">!</span>
-    Remember that you need to have your Jibo updated to enjoy it! ROM must be on this LAN (port 7160, or 8160 on community firmware).
-  </footer>
+    <footer class="footer">
+      <img class="alert-icon" src="/apk/mipmap/ic_alert_update.png" width="24" height="24" alt="">
+      Remember that you need to have your Jibo updated to enjoy it!
+    </footer>
+  </div>
+
+  <div id="connecting" class="connect-overlay" aria-hidden="true">
+    <div id="phase-connecting" class="connect-phase is-active">
+      <div class="connect-bg connecting-bg" aria-hidden="true"></div>
+      <div id="stars-connecting" class="stars-layer" aria-hidden="true"></div>
+      <h2>CONNECTING TO JIBO…</h2>
+      <div id="pairing-lottie" class="pairing-lottie"></div>
+    </div>
+    <div id="phase-connected" class="connect-phase">
+      <div class="connect-bg connected-bg" aria-hidden="true"></div>
+      <div class="puntitos puntitos-tl" aria-hidden="true"></div>
+      <div class="puntitos puntitos-br" aria-hidden="true"></div>
+      <h2 class="connected-title">CONNECTED.</h2>
+      <img class="connected-art" src="/apk/mipmap/connected_ilustracion.png" alt="">
+    </div>
+  </div>
+
+  <div id="splash" class="splash">
+    <img src="/apk/mipmap/splash.png" alt="Be a Maker">
+  </div>
+
+  <script src="/vendor/lottie.min.js"></script>
+  <script src="/stars.js"></script>
+  <script src="/bam-lottie.js"></script>
   <script src="/pairing.js"></script>
 </body>
 </html>

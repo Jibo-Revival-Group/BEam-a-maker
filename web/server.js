@@ -8,8 +8,11 @@ const { BamRom } = require('./lib/bam-rom');
 
 const PORT = Number(process.env.PORT) || 5173;
 const ROOT = __dirname;
+const REPO = path.join(ROOT, '..');
 const PUBLIC = path.join(ROOT, 'public');
-const PLAYGROUND = path.join(ROOT, '..', 'assets', 'web', 'playground');
+const PLAYGROUND = path.join(REPO, 'assets', 'web', 'playground');
+const ASSETS = path.join(REPO, 'assets');
+const RES = path.join(REPO, 'res');
 
 const app = express();
 const rom = new BamRom();
@@ -17,6 +20,15 @@ const rom = new BamRom();
 app.use(express.json({ limit: '2mb' }));
 app.use(express.static(PUBLIC));
 app.use('/playground', express.static(PLAYGROUND));
+app.use('/apk/assets', express.static(ASSETS));
+app.use('/apk/mipmap', express.static(path.join(RES, 'mipmap-xxhdpi')));
+app.use('/apk/mipmap', express.static(path.join(RES, 'mipmap-xhdpi')));
+app.use('/apk/mipmap', express.static(path.join(RES, 'mipmap-hdpi')));
+app.use('/apk/mipmap', express.static(path.join(RES, 'mipmap-mdpi')));
+app.use('/apk/drawable', express.static(path.join(RES, 'drawable-xxhdpi')));
+app.use('/apk/drawable', express.static(path.join(RES, 'drawable-xhdpi')));
+app.use('/apk/drawable', express.static(path.join(RES, 'drawable-hdpi')));
+app.use('/apk/raw', express.static(path.join(RES, 'raw')));
 
 app.get('/scratch', (_req, res) => {
   res.sendFile(path.join(PUBLIC, 'scratch.html'));
@@ -24,6 +36,10 @@ app.get('/scratch', (_req, res) => {
 
 app.get('/api/status', (_req, res) => {
   res.json(rom.status());
+});
+
+app.get('/api/cool-ideas', (_req, res) => {
+  res.sendFile(path.join(RES, 'raw', 'cool_ideas.json'));
 });
 
 app.post('/api/connect', async (req, res) => {
