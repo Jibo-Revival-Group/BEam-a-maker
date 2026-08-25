@@ -1,4 +1,5 @@
 # Modified Jibo "Be a Maker" App: BEam a Maker
+<img width="1619" height="971" alt="beam a maker" src="https://github.com/user-attachments/assets/f9255c77-7be7-43ff-a80d-bb1ace69dab5" />
 
 A patched build of Jibo's official Be a Maker companion app (`com.everis.jibo.app.beamaker`), modified to skip the cloud-based sign-in flow that Jibo's original servers required. Jibo Inc.'s cloud backend was shut down in 2019, which permanently broke sign-in for the stock app — this patch lets the app boot straight into local pairing instead of hanging at a dead login screen.
 
