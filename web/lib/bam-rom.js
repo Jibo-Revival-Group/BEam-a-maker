@@ -1,5 +1,7 @@
 'use strict';
 
+const http = require('http');
+const WebSocket = require('ws');
 const { Client, AttentionMode } = require('rom-control');
 
 const ROM_PORTS = [7160, 8160];
@@ -55,6 +57,200 @@ async function sayOnRobot(client, text) {
     return;
   }
   await client.behavior.say(prepared);
+}
+
+function httpPostJson(host, port, path, body) {
+  return new Promise((resolve, reject) => {
+    const payload = typeof body === 'string' ? body : JSON.stringify(body);
+    const req = http.request(
+      {
+        host,
+        port,
+        path,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload)
+        }
+      },
+      (res) => {
+        let data = '';
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+        res.on('end', () => resolve(data));
+      }
+    );
+    req.setTimeout(4000, () => req.destroy(new Error('timeout')));
+    req.on('error', reject);
+    req.write(payload);
+    req.end();
+  });
+}
+
+function extractSpeech(body) {
+  if (!body) return '';
+  if (typeof body === 'string') return body.trim();
+  const nested = body.listen || body.Listen || body;
+  const value =
+    nested.Speech ||
+    nested.speech ||
+    nested.Result ||
+    nested.result ||
+    body.Speech ||
+    body.speech ||
+    body.Result ||
+    body.result ||
+    '';
+  return String(value).trim();
+}
+
+function listenLocalAsr(host, timeMs, asrPort = 8088) {
+  return new Promise((resolve) => {
+    let done = false;
+    let asrWs = null;
+    const taskId = 'bam-' + Date.now() + '-' + Math.floor(Math.random() * 1e9);
+    const reqId = 'start-' + Date.now();
+
+    const finish = (text) => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      if (asrWs) {
+        try {
+          asrWs.terminate();
+        } catch (_) {
+          /* ignore */
+        }
+        asrWs = null;
+      }
+      httpPostJson(host, asrPort, '/asr_simple_interface', {
+        command: 'stop',
+        task_id: taskId,
+        request_id: 'stop-' + Date.now()
+      }).catch(() => {});
+      resolve(text || '');
+    };
+
+    const timer = setTimeout(() => finish(''), timeMs + 1500);
+
+    try {
+      asrWs = new WebSocket('ws://' + host + ':' + asrPort + '/simple_port');
+    } catch (_) {
+      finish('');
+      return;
+    }
+
+    asrWs.on('open', () => {
+      httpPostJson(host, asrPort, '/asr_simple_interface', {
+        command: 'start',
+        task_id: taskId,
+        request_id: reqId,
+        audio_source_id: 'alsa1',
+        hotphrase: 'none',
+        speech_to_text: true
+      }).catch(() => {
+        /* ROM Listen may still return a transcript */
+      });
+    });
+
+    asrWs.on('message', (data) => {
+      let evt;
+      try {
+        evt = JSON.parse(String(data));
+      } catch (_) {
+        return;
+      }
+      const evType = evt.event_type || evt.eventType || evt.event || evt.type;
+      if (evType !== 'speech_to_text_final') return;
+      const utterances = evt.utterances || evt.Utterances || (evt.payload && evt.payload.utterances);
+      const first = Array.isArray(utterances) ? utterances[0] : utterances;
+      const text =
+        typeof first === 'string'
+          ? first
+          : String((first && (first.utterance || first.Utterance || first.text)) || '');
+      if (text.trim()) finish(text.trim());
+    });
+
+    asrWs.on('error', () => {
+      /* 8088 is often LAN-closed; keep waiting for ROM */
+    });
+  });
+}
+
+function listenRomTranscript(conn, txId, timeMs) {
+  return new Promise((resolve) => {
+    let done = false;
+    const finish = (text) => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      conn.removeListener('onListenResult', onResult);
+      conn.removeListener('event', onEvent);
+      resolve(text || '');
+    };
+    const timer = setTimeout(() => finish(''), timeMs + 1500);
+
+    function take(body) {
+      const text = extractSpeech(body);
+      if (text) finish(text);
+    }
+
+    function onResult(id, body) {
+      if (id && id !== txId) return;
+      take(body);
+    }
+
+    function onEvent(id, body) {
+      if (id && id !== txId) return;
+      if (!body) return;
+      if (body.Event === 'onListenResult' || body.Speech || body.listen || body.Result) {
+        take(body);
+      }
+    }
+
+    conn.on('onListenResult', onResult);
+    conn.on('event', onEvent);
+  });
+}
+
+function firstNonEmpty(promises, timeoutMs) {
+  return new Promise((resolve) => {
+    let settled = false;
+    const settle = (value) => {
+      const text = String(value || '').trim();
+      if (!text || settled) return;
+      settled = true;
+      resolve(text);
+    };
+    promises.forEach((promise) => {
+      Promise.resolve(promise).then(settle).catch(() => {});
+    });
+    setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      resolve('');
+    }, timeoutMs);
+  });
+}
+
+async function listenOnRobot(client, timeMs = 15000) {
+  const conn = client._conn;
+  if (!conn) return '';
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  const romTxId = conn.listen(timeMs, Math.min(8000, timeMs), 'en');
+  try {
+    return await firstNonEmpty(
+      [listenLocalAsr(conn.host, timeMs), listenRomTranscript(conn, romTxId, timeMs)],
+      timeMs + 2000
+    );
+  } finally {
+    try {
+      if (romTxId) conn.cancel(romTxId);
+    } catch (_) {
+      /* ignore */
+    }
+  }
 }
 
 class BamRom {
@@ -258,19 +454,12 @@ class BamRom {
           await sayOnRobot(client, String(list[0] || ''));
           break;
         case 'listen': {
-          try {
-            const speech = await client.audio.awaitSpeech({ mode: 'local', time: 15000 });
-            const text = (speech && (speech.content || speech.speech)) || '';
-            this.emit({
-              type: 'eventCallback',
-              data: JSON.stringify({ listen: { Speech: text } })
-            });
-          } catch (_) {
-            this.emit({
-              type: 'eventCallback',
-              data: JSON.stringify({ listen: { Speech: '' } })
-            });
-          }
+          const text = await listenOnRobot(client, 15000);
+          console.log('BAM listen', text || '(empty)');
+          this.emit({
+            type: 'eventCallback',
+            data: JSON.stringify({ listen: { Speech: text } })
+          });
           break;
         }
         case 'lookat':
