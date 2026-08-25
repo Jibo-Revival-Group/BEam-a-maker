@@ -18,6 +18,9 @@ const app = express();
 const rom = new BamRom();
 
 app.use(express.json({ limit: '2mb' }));
+app.get('/splash.png', (_req, res) => {
+  res.sendFile(path.join(REPO, 'splash.png'));
+});
 app.use(express.static(PUBLIC));
 app.use('/playground', express.static(PLAYGROUND));
 app.use('/apk/assets', express.static(ASSETS));

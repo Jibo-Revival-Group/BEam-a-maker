@@ -188,7 +188,7 @@ h1 {
   position: fixed;
   inset: 0;
   z-index: 80;
-  background: #c36871;
+  background: #f9b453;
   transition: opacity var(--anim) ease;
 }
 
