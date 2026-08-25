@@ -6,8 +6,9 @@ A patched build of Jibo's official Be a Maker companion app (`com.everis.jibo.ap
 This is a Jibo Revival Group preservation project. It is not affiliated with Jibo Inc. or NTT Disruption.
 
 ## Status
+Web App is complete
 
-Work in progress. Login/auth bypass works. Local robot discovery and connection are still being figured out — see [Known issues](#known-issues) below.
+Android app is work in progress. Login/auth bypass works. Local robot discovery and connection are still being figured out in android app — see [Known issues](#known-issues) below.
 
 ## What was changed
 
