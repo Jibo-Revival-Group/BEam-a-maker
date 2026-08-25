@@ -1,0 +1,145 @@
+:root {
+  --rose: #c36871;
+  --rose-dark: #8f3d4a;
+  --white: #ffffff;
+  --scratch-blue: #2a3b5b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  color: var(--white);
+  background: linear-gradient(165deg, #d27a84 0%, var(--rose) 45%, var(--rose-dark) 100%);
+}
+
+.stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.95) 1.2px, transparent 1.4px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.7) 1px, transparent 1.2px),
+    radial-gradient(circle, rgba(255, 220, 180, 0.8) 1.4px, transparent 1.6px);
+  background-size: 120px 120px, 180px 180px, 90px 90px;
+  background-position: 10px 20px, 60px 80px, 40px 10px;
+  opacity: 0.55;
+}
+
+.topbar {
+  position: relative;
+  z-index: 1;
+  padding: 16px 20px;
+}
+
+.back {
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.panel {
+  position: relative;
+  z-index: 1;
+  max-width: 640px;
+  margin: 8vh auto 0;
+  padding: 0 24px 140px;
+  text-align: center;
+}
+
+h1 {
+  font-size: clamp(22px, 4vw, 32px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.25;
+  margin: 0 0 36px;
+}
+
+.ip-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+#robot-ip {
+  width: min(420px, 100%);
+  padding: 14px 16px;
+  border: 0;
+  border-radius: 4px;
+  font-size: 20px;
+  text-align: center;
+  color: var(--scratch-blue);
+}
+
+#connect {
+  display: block;
+  margin: 28px auto 0;
+  min-width: 220px;
+  padding: 14px 48px;
+  border: 2px solid var(--white);
+  border-radius: 28px;
+  background: transparent;
+  color: var(--white);
+  font: inherit;
+  font-size: 18px;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+}
+
+#connect:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+#connect:not(:disabled):hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.status {
+  min-height: 1.5em;
+  margin: 20px 0 0;
+  font-size: 15px;
+}
+
+.status.error {
+  color: #ffe0c2;
+}
+
+.status.ok {
+  color: #e8ffe8;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 20px;
+  background: var(--rose);
+  font-size: 14px;
+}
+
+.alert {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #f76e1e;
+  font-weight: 700;
+}

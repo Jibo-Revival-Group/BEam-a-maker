@@ -1,0 +1,106 @@
+.scratch-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 56px;
+  padding: 0 12px;
+  background: #2a3b5b;
+  color: #fff;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+}
+
+.scratch-toolbar input {
+  flex: 1;
+  min-width: 0;
+  height: 30px;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-size: 16px;
+}
+
+.scratch-toolbar button {
+  height: 30px;
+  min-width: 72px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 4px;
+  background: #fff;
+  color: #2a3b5b;
+  font: inherit;
+  cursor: pointer;
+}
+
+.scratch-toolbar button.ghost,
+.scratch-toolbar .icon-btn {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  min-width: 40px;
+}
+
+.conn {
+  font-size: 12px;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+#blocks {
+  top: 56px;
+}
+
+#projectButtons {
+  top: 64px;
+  right: 16px;
+}
+
+.drawer {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  bottom: 0;
+  z-index: 25;
+  width: min(320px, 90vw);
+  padding: 16px;
+  background: #222f48;
+  color: #fff;
+  overflow: auto;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+}
+
+.drawer h2 {
+  margin: 0 0 12px;
+}
+
+.drawer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.drawer li {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 8px;
+}
+
+.drawer li button {
+  flex: 1;
+  text-align: left;
+  padding: 8px;
+  border: 0;
+  background: #2a3b5b;
+  color: #fff;
+  cursor: pointer;
+}
+
+.drawer .delete {
+  flex: 0;
+  background: #c36871;
+}

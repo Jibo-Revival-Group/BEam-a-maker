@@ -26,6 +26,7 @@ This repo **is** an [apktool](https://apktool.org) project, kept at the root so 
 | `AndroidManifest.xml`, `apktool.yml` | apktool project metadata |
 | `original/` | Stock APK binary manifest + Play signing metadata (not a second full decompile) |
 | `docs/` | Technical patch notes |
+| `web/` | Browser Be a Maker (pair by IP + Scratch) |
 | `license` | BSD 3-Clause |
 
 Rebuild output (`build/`, `dist/`, `*.apk`) is gitignored.
@@ -35,7 +36,21 @@ Rebuild output (`build/`, `dist/`, `*.apk`) is gitignored.
 - Since `getJibos()` now returns an empty robot list, `PairingActivity` currently shows "We couldn't find a Jibo to connect to" — the list needs to be populated with a real `Robot(id, name, robotName)` object for pairing to proceed.
 - Whether the underlying `JiboRemoteControl.connect()` call (a closed, obfuscated class in the bundled apptoolkit SDK) can complete locally against a robot — especially one running the community JiboOS — is still unconfirmed. This may require further reverse-engineering.
 
-## Building
+## Web app (pair by IP)
+
+The Android SDK cannot run in a browser. `web/` is a local companion: pairing with a typed robot IP, then the original Scratch playground talking to ROM.
+
+The computer running Node must be on the same LAN as the robot. ROM must be listening (developer / int-developer). The app tries port **7160** first (stock Be a Maker), then **8160** (community `rom-control`).
+
+```bash
+cd web
+npm install
+npm start
+```
+
+Open `http://127.0.0.1:5173`, enter the robot IP, then CONNECT. Scratch projects are stored in the browser (`localStorage`), not in the APK.
+
+## Building the Android APK
 
 ```bash
 apktool b . -o dist/beamaker_patched.apk
