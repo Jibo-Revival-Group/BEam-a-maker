@@ -152,6 +152,32 @@
     return window.Scratch && Scratch.vm;
   }
 
+  function menuEsml(label) {
+    if (typeof label !== 'string' || label.indexOf('<') !== -1) return label;
+    const menus = [window.expressionList, window.emojiList, window.danceList, window.soundList];
+    for (let m = 0; m < menus.length; m++) {
+      const menu = menus[m];
+      if (!menu) continue;
+      for (let i = 0; i < menu.length; i++) {
+        if (menu[i][0] === label || menu[i][1] === label) return menu[i][1];
+      }
+    }
+    return label;
+  }
+
+  function hookJiboMenus() {
+    if (!window.jibo || window.jibo._bamMenuHooked) return;
+    window.jibo._bamMenuHooked = true;
+    const orig = window.jibo.execute.bind(window.jibo);
+    window.jibo.execute = function (blockType, args, isSound) {
+      const next = Array.isArray(args) ? args.slice() : args;
+      if (String(blockType).toLowerCase() === 'say' && Array.isArray(next)) {
+        next[0] = menuEsml(next[0]);
+      }
+      return orig(blockType, next, isSound);
+    };
+  }
+
   let targetReady = null;
 
   function ensureTarget() {
@@ -162,6 +188,7 @@
           targetReady = null;
           return null;
         }
+        hookJiboMenus();
         try {
           if (!instance.editingTarget) {
             await instance.loadProject(JSON.stringify(BLANK_SB2));

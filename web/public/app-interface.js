@@ -55,13 +55,32 @@
 
   connectWs();
 
+  function menuEsml(label) {
+    if (typeof label !== 'string' || label.indexOf('<') !== -1) return label;
+    const menus = [window.expressionList, window.emojiList, window.danceList, window.soundList];
+    for (let m = 0; m < menus.length; m++) {
+      const menu = menus[m];
+      if (!menu) continue;
+      for (let i = 0; i < menu.length; i++) {
+        if (menu[i][0] === label || menu[i][1] === label) return menu[i][1];
+      }
+    }
+    return label;
+  }
+
   window.appInterface = {
     callbackHandler: function (json) {
       const command = typeof json === 'string' ? JSON.parse(json) : json;
+      let args = command.args;
+      if (String(command.block_type || '').toLowerCase() === 'say') {
+        const list = Array.isArray(args) ? args.slice() : [args];
+        list[0] = menuEsml(list[0]);
+        args = list;
+      }
       send({
         type: 'command',
         block_type: command.block_type,
-        args: command.args,
+        args: args,
         block_id: command.block_id
       });
     },

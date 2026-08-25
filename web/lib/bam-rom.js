@@ -15,6 +15,48 @@ function asList(args) {
   return Array.isArray(args) ? args : [args];
 }
 
+function looksLikeEsml(text) {
+  return /<(anim|sfx|break|pitch|phoneme|duration|style)\b/i.test(String(text || ''));
+}
+
+/**
+ * BAM menus use ESML `meta='&(rom)'` / `meta='!(hf), &(airplane)'`.
+ * rom-control's say() sanitizer turns `&` into `and`, which kills the lookup.
+ * Convert those filters to BEam-style `filter=` and drop the ROM-pack marker.
+ */
+function rewriteBamMeta(esml) {
+  return String(esml || '').replace(/\smeta=(['"])([^'"]*)\1/gi, (_full, quote, meta) => {
+    const parts = [];
+    const re = /(!|&)\(([^)]*)\)/g;
+    let match;
+    while ((match = re.exec(meta))) {
+      const names = match[2]
+        .split(',')
+        .map((name) => name.trim())
+        .filter(Boolean);
+      for (const name of names) {
+        if (match[1] === '&' && name.toLowerCase() === 'rom') continue;
+        parts.push(match[1] === '!' ? '!' + name : name);
+      }
+    }
+    if (!parts.length) return '';
+    return ` filter=${quote}${parts.join(', ')}${quote}`;
+  });
+}
+
+async function sayOnRobot(client, text) {
+  const prepared = rewriteBamMeta(text);
+  if (looksLikeEsml(prepared) && client._conn && typeof client._conn.say === 'function') {
+    const txId = client._conn.say(prepared);
+    const finished = await client._conn.awaitDone(txId, 30000);
+    if (!finished) {
+      throw Object.assign(new Error('Animation/say timed out'), { code: 'SAY_TIMEOUT' });
+    }
+    return;
+  }
+  await client.behavior.say(prepared);
+}
+
 class BamRom {
   constructor() {
     this.client = null;
@@ -213,7 +255,7 @@ class BamRom {
     try {
       switch (type) {
         case 'say':
-          await client.behavior.say(String(list[0] || ''));
+          await sayOnRobot(client, String(list[0] || ''));
           break;
         case 'listen': {
           try {
