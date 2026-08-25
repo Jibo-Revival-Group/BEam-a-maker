@@ -1,0 +1,18 @@
+# apktool rebuild output
+build/
+dist/
+*.apk
+*.idsig
+
+# signing keys
+*.jks
+*.keystore
+*.p12
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+__MACOSX/
+.idea/
+*.iml
+.vscode/
