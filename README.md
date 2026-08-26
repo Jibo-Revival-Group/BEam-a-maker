@@ -1,4 +1,4 @@
-# Be a Maker
+# Be a Maker Revived
 <img src="splash.png">
 
 A patched build of Jibo's official Be a Maker companion app (`com.everis.jibo.app.beamaker`), modified to skip the cloud-based sign-in flow that Jibo's original servers required. Jibo Inc.'s cloud backend was shut down in 2019, which permanently broke sign-in for the stock app — this patch lets the app boot straight into local pairing instead of hanging at a dead login screen.
